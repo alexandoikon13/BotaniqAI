@@ -1,23 +1,31 @@
-from model.model_utils import load_yolov8_model
+from model.model_utils import load_yolov8_model, run_inference
+import openai
 
-# Load the model (consider doing this outside the function if it's resource-intensive)
+
+# Load the model (consider doing this when starting the app)
 model = load_yolov8_model()
 
 def process_image(file):
-    # Convert the file (image) to a format suitable for YOLOv8
-    # For example, if it's a PIL image, you might need to convert it to a tensor
-    # ...
+    # Run YOLOv8 inference
+    file.stream.seek(0)  # Important: seek to the beginning of the file
+    processed_image_path = run_inference(model, file.stream)
 
-    # Perform object detection
-    results = model(image_tensor)
+    # TODO: Generate a description using OpenAI API
 
-    # Process results, extract detected objects, bounding boxes, etc.
-    # ...
-
-    # Convert the processed results to an image file or a format that your Flask app can handle
-    # ...
-
-    # Generate a description (you will integrate OpenAI API later for this)
-    description = "Detected objects: ..."
+    description = "Description to be added."
 
     return processed_image_path, description
+
+def generate_description(image_data):
+    openai.api_key = 'your-api-key'
+
+    # Construct a prompt based on your requirements
+    prompt = f"Describe the following image: {image_data}"
+
+    response = openai.Completion.create(
+      engine="davinci",
+      prompt=prompt,
+      max_tokens=100
+    )
+
+    return response.choices[0].text.strip()
