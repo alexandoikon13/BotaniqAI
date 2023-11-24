@@ -1,4 +1,6 @@
 flask
-torch
 pymongo
 boto3
+torch
+torchvision
+torchaudio
