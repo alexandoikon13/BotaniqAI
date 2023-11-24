@@ -1,4 +1,5 @@
 flask
+gunicorn
 cassandra-driver
 boto3
 torch
