@@ -1,7 +1,14 @@
 from flask import Blueprint, render_template, request
-from .utils import process_image  # Assuming you'll define this function
+from werkzeug.utils import secure_filename
+from .utils import process_image
 
 main = Blueprint('main', __name__)
+
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+
+def allowed_file(filename):
+    return '.' in filename and \
+        filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @main.route('/')
 def index():
@@ -15,6 +22,10 @@ def upload():
     if file.filename == '':
         return 'No selected file', 400
     
-    # Process the uploaded file
-    output, description = process_image(file)   # 'process_image' is a placeholder function where you'll add the logic for image processing and OpenAI API interaction
-    return render_template('results.html', image=output, description=description)
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        file.stream.seek(0)  # Reset file pointer
+        output, description = process_image(file)  # process the uploaded file
+        return render_template('results.html', image=output, description=description)
+    else:
+        return 'File type not allowed', 400
