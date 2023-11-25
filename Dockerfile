@@ -1,6 +1,3 @@
-# Use an official Python runtime as a parent image
-FROM python:3.8-slim
-
 # Start from the PyTorch image with CUDA support
 FROM pytorch/pytorch:1.8.1-cuda11.1-cudnn8-runtime
 
