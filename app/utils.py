@@ -1,22 +1,23 @@
-from model.model_utils import load_yolov8_model, run_inference
+from model.model_utils import load_yolov8_model, run_inference_and_save
 import openai
-
+import os
 
 # Load the model (consider doing this when starting the app)
 model = load_yolov8_model()
 
-def process_image(file):
+def process_image(file, cloudcube_url):
     # Run YOLOv8 inference
     file.stream.seek(0)  # Important: seek to the beginning of the file
-    processed_image_path = run_inference(model, file.stream)
+    # Run YOLOv8 inference and save results in Cloudcube
+    cloudcube_results_url = run_inference_and_save(model, file.stream, cloudcube_url)
 
     # Generate a description using OpenAI API
-    description = generate_description(processed_image_path)
+    description = generate_description(cloudcube_results_url)
 
-    return processed_image_path, description
+    return cloudcube_results_url, description
 
 def generate_description(image_data):
-    openai.api_key = 'your-api-key'
+    openai.api_key = os.getenv('OPENAI_API_KEY')
 
     # Construct a prompt based on your requirements
     prompt = f"Describe the following image: {image_data}"

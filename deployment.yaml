@@ -9,6 +9,9 @@ spec:
       containers:
       - name: botaniqai
         image: botaniqai:latest
+        env:
+        - name: OPENAI_API_KEY
+          value: {OPENAI_API_KEY}
         resources:
           limits:
             cpu: "1"
