@@ -161,3 +161,6 @@ cython_debug/
 
 # YOLOv8
 ultralytics/
+
+# Other files
+deployment.yaml

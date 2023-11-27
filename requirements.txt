@@ -2,8 +2,8 @@ flask
 gunicorn
 cassandra-driver
 boto3
-torch
-torchvision
+# torch
+# torchvision
 torchaudio
 openai
 python-magic
