@@ -10,9 +10,8 @@ def process_image(file):
     file.stream.seek(0)  # Important: seek to the beginning of the file
     processed_image_path = run_inference(model, file.stream)
 
-    # TODO: Generate a description using OpenAI API
-
-    description = "Description to be added."
+    # Generate a description using OpenAI API
+    description = generate_description(processed_image_path)
 
     return processed_image_path, description
 
