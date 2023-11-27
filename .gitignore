@@ -163,4 +163,5 @@ cython_debug/
 ultralytics/
 
 # Other files
-deployment.yaml
+*.yaml
+*.yml
