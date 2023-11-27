@@ -7,7 +7,7 @@ BotaniqAI is a sophisticated web application designed to analyze and identify pl
 - Cassandra Database Integration: Efficiently stores image metadata and processing results.
 - User-Friendly Interface: Easy upload and review of images and results.
 - Cloud Storage: Uses Cloudcube for organized and secure storage of images.
-- Containerized Deployment: Docker and Kubernetes ensure scalable and reliable deployment on Heroku.
+- Containerized Deployment: Docker (and locally with Kubernetes) ensure scalable and reliable deployment on Heroku.
 
 ## Technologies Used
 - Frontend: HTML, CSS, JavaScript
@@ -15,7 +15,7 @@ BotaniqAI is a sophisticated web application designed to analyze and identify pl
 - AI and ML: PyTorch, YOLOv8, OpenAI API
 - Database: Cassandra
 - Cloud Storage: Cloudcube
-- Containerization and Orchestration: Docker, Kubernetes
+- Containerization and Orchestration: Docker, Kubernetes (local development/deployment with Minikube)
 - Deployment Platform: Heroku
 
 ## Usage
