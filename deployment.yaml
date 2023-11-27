@@ -4,7 +4,13 @@ metadata:
   name: botaniqai
 spec:
   replicas: 3
+  selector:
+    matchLabels:
+      app: botaniqai  # This should match labels defined in the template
   template:
+    metadata:
+      labels:
+        app: botaniqai  # Labels for pods
     spec:
       containers:
       - name: botaniqai
@@ -13,8 +19,8 @@ spec:
         - name: OPENAI_API_KEY
           valueFrom:
             secretKeyRef:
-              name: botaniqai-secrets
-              key: OPENAI_API_KEY
+              name: botaniqai-secrets  # The name of your Kubernetes secret
+              key: OPENAI_API_KEY  # The key in your secret
         resources:
           limits:
             cpu: "1"
