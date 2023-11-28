@@ -1,5 +1,5 @@
 import boto3
-from PIL import Image
+from PIL import Image, ImageDraw
 from io import BytesIO
 from ultralytics import YOLO
 import uuid
@@ -18,6 +18,12 @@ def run_inference_and_save(model, file_stream, cloudcube_url):
 
     # Perform inference
     results = model(image)
+
+    # Draw bounding boxes
+    draw = ImageDraw.Draw(image)
+    for detection in results.xyxy[0]:  # results.xyxy[0] is a tensor of shape (n, 6) where n is the number of detections
+        x1, y1, x2, y2, conf, cls = detection
+        draw.rectangle([x1, y1, x2, y2], outline="red", width=2)
 
     # Save results as an image locally
     local_results_path = f"results/{str(uuid.uuid4())}.jpg"
