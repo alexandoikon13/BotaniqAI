@@ -1,6 +1,9 @@
 # Start from the PyTorch image with CUDA support
 FROM pytorch/pytorch:1.8.1-cuda11.1-cudnn8-runtime
 
+# Install libgl1-mesa-glx and other dependencies required by OpenCV
+RUN apt-get update && apt-get install -y libgl1-mesa-glx libglib2.0-0
+
 # Set the working directory in the container
 WORKDIR /usr/src/app
 
@@ -14,4 +17,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 EXPOSE 5000
 
 # Run app.py using gunicorn when the container launches
-CMD ["gunicorn", "-b", "0.0.0.0:5000", "--timeout 300", "run:app"]
+CMD ["gunicorn", "-b", "0.0.0.0:5000", "--timeout 3000", "run:app"]
