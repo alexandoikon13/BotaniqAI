@@ -26,7 +26,9 @@ def run_inference_and_save(model, file_stream, cloudcube_url):
         im = Image.fromarray(im_array[..., ::-1])  # RGB PIL image
 
     # Save the image with detections locally
-    local_results_path = f"results/{str(uuid.uuid4())}.jpg"
+    results_dir = "results"
+    os.makedirs(results_dir, exist_ok=True)
+    local_results_path = os.path.join(results_dir, f"{str(uuid.uuid4())}.jpg")
     im.save(local_results_path)
 
     # Upload the results to Cloudcube
