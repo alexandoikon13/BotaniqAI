@@ -20,20 +20,14 @@ def run_inference_and_save(model, file_stream, cloudcube_url):
     # Perform inference
     results = model(image)
 
-    # Check if any detections were made
-    if results.xyxy[0].shape[0] == 0:
-        print("No detections")
-        return None  # or handle it as you see fit
-
-    # Draw bounding boxes on the image
-    draw = ImageDraw.Draw(image)
-    for detection in results.xyxy[0]:  # Iterate over detections
-        x1, y1, x2, y2, conf, cls = detection
-        draw.rectangle([x1, y1, x2, y2], outline="red", width=2)
+    # Show the results
+    for r in results:
+        im_array = r.plot()  # plot a BGR numpy array of predictions
+        im = Image.fromarray(im_array[..., ::-1])  # RGB PIL image
 
     # Save the image with detections locally
     local_results_path = f"results/{str(uuid.uuid4())}.jpg"
-    image.save(local_results_path)
+    im.save(local_results_path)
 
     # Upload the results to Cloudcube
     s3 = boto3.client('s3')
