@@ -1,5 +1,4 @@
 import boto3
-import torch
 from PIL import Image
 from io import BytesIO
 from ultralytics import YOLO
