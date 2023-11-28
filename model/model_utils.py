@@ -32,7 +32,9 @@ def run_inference_and_save(model, file_stream, cloudcube_url):
     im.save(local_results_path)
 
     # Upload the results to Cloudcube
-    s3 = boto3.client('s3')
+    s3 = boto3.client('s3',
+        aws_access_key_id=os.environ.get('CLOUDCUBE_ACCESS_KEY_ID'),
+        aws_secret_access_key=os.environ.get('CLOUDCUBE_SECRET_ACCESS_KEY'))
     bucket_name = cloudcube_url.split('.')[0].split('//')[1]
     object_name = f"processed/{os.path.basename(local_results_path)}"
     s3.upload_file(local_results_path, bucket_name, object_name)
