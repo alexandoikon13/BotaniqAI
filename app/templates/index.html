@@ -3,19 +3,61 @@
 <head>
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- Update jQuery version -->
 </head>
 <body>
     <div class="container">
         <h2>Upload an Image</h2>
-        <form action="/upload" method="post" enctype="multipart/form-data">
+        <form id="upload-form" enctype="multipart/form-data">
             <div class="form-group">
                 <input type="file" name="file" class="form-control">
             </div>
             <button type="submit" class="btn btn-primary">Upload</button>
         </form>
+        <div id="status"></div>
     </div>
-    <!-- Bootstrap JS, Popper.js, and jQuery -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+
+    <script>
+        $(document).ready(function(){
+            $('#upload-form').submit(function(e){
+                e.preventDefault();
+                var formData = new FormData(this);
+                $.ajax({
+                    type: 'POST',
+                    url: '/upload',
+                    data: formData,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: function(data) {
+                        console.log("Upload successful");
+                        checkStatus(data.task_id, data.token);
+                    },
+                    error: function() {
+                        console.log("Upload failed");
+                    }
+                });
+            });
+        });
+
+        function checkStatus(taskId, token) {
+            var intervalId = setInterval(function() {
+                $.get('/status/' + taskId, {token: token}, function(data) {
+                    if (data.status === 'Complete') {
+                        clearInterval(intervalId);
+                        $('#status').html(`<img src="${data.image}" alt="Processed Image" class="img-fluid"><p>${data.description}</p>`);
+                    } else if (data.status === 'Error') {
+                        clearInterval(intervalId);
+                        $('#status').html(`<p>Error: ${data.message}</p>`);
+                    } else {
+                        $('#status').html(`<p>${data.status}</p>`);
+                    }
+                });
+            }, 2000); // Poll every 2 seconds
+        }
+    </script>
+
+    <!-- Bootstrap JS, Popper.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 </body>
