@@ -17,4 +17,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 EXPOSE 5000
 
 # Run app.py using gunicorn when the container launches
-CMD ["gunicorn", "-b", "0.0.0.0:5000", "--timeout", "3000", "run:app", "--preload"]
+CMD gunicorn -b 0.0.0.0:$PORT --timeout 3000 run:app --preload
+# CMD ["gunicorn", "-b", "0.0.0.0:5000", "--timeout", "3000", "run:app", "--preload"]
