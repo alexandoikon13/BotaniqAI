@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, request
 from werkzeug.utils import secure_filename
 from .utils import process_image
 import logging
+import os
 
 main = Blueprint('main', __name__)
 
