@@ -27,7 +27,9 @@ def upload():
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.stream.seek(0)  # Reset file pointer
-            output, description = process_image(file)  # process the uploaded file
+            # Fetch Cloudcube URL from environment variables
+            cloudcube_url = os.getenv('CLOUDCUBE_URL')
+            output, description = process_image(file, cloudcube_url)  # # process the uploaded file and pass cloudcube_url here
             return render_template('results.html', image=output, description=description)
         else:
             return 'File type not allowed', 400
