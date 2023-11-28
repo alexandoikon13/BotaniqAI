@@ -2,6 +2,7 @@ import boto3
 from PIL import Image, ImageDraw
 from io import BytesIO
 from ultralytics import YOLO
+from urllib.parse import urlparse
 import uuid
 import os
 
@@ -32,12 +33,13 @@ def run_inference_and_save(model, file_stream, cloudcube_url):
     im.save(local_results_path)
 
     # Upload the results to Cloudcube
+    parsed_url = urlparse(os.environ.get('CLOUDCUBE_URL'))
+    bucket_name = parsed_url.netloc.split('.')[0]
     s3 = boto3.client('s3',
         aws_access_key_id=os.environ.get('CLOUDCUBE_ACCESS_KEY_ID'),
         aws_secret_access_key=os.environ.get('CLOUDCUBE_SECRET_ACCESS_KEY'))
-    bucket_name = cloudcube_url.split('.')[0].split('//')[1]
-    object_name = f"processed/{os.path.basename(local_results_path)}"
-    s3.upload_file(local_results_path, bucket_name, object_name)
+    object_name = f"results/{os.path.basename(local_results_path)}"
+    s3.put_object(local_results_path, bucket_name, object_name)
 
     # Return the URL of the saved image in Cloudcube
     cloudcube_results_url = f"{cloudcube_url}{object_name}"
