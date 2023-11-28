@@ -39,7 +39,8 @@ def run_inference_and_save(model, file_stream, cloudcube_url):
         aws_access_key_id=os.environ.get('CLOUDCUBE_ACCESS_KEY_ID'),
         aws_secret_access_key=os.environ.get('CLOUDCUBE_SECRET_ACCESS_KEY'))
     object_name = f"results/{os.path.basename(local_results_path)}"
-    s3.put_object(local_results_path, bucket_name, object_name)
+    with open(local_results_path, 'rb') as file_data:
+        s3.put_object(Bucket=bucket_name, Key=object_name, Body=file_data)
 
     # Return the URL of the saved image in Cloudcube
     cloudcube_results_url = f"{cloudcube_url}{object_name}"
