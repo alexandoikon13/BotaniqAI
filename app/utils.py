@@ -24,7 +24,7 @@ def generate_description(image_data):
     prompt = f"Describe the following image: {image_data}"
 
     response = client.completions.create(
-      engine="davinci",
+      model="davinci-002",
       prompt=prompt,
       max_tokens=100
     )
