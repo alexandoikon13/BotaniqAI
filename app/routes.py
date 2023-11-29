@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, jsonify
 from werkzeug.utils import secure_filename
 from .utils import process_image
+from urllib.parse import urlparse
 import secrets  # Python standard library for generating secure tokens
 import logging
 import uuid
@@ -51,7 +52,7 @@ def process_file_async(file, task_id):
     start_time = time.time()
     try:
         # Fetch Cloudcube URL from environment variables
-        cloudcube_url = os.getenv('CLOUDCUBE_URL')
+        cloudcube_url = urlparse(os.getenv('CLOUDCUBE_URL'))
         output, description = process_image(file, cloudcube_url)
         task_status[task_id] = {"status": "Complete", "image": output, "description": description}
     except Exception as e:
@@ -59,7 +60,7 @@ def process_file_async(file, task_id):
         task_status[task_id] = {"status": "Error", "message": str(e)}
     finally:
         # Mark the task for deletion after a certain time
-        task_status[task_id]['delete_at'] = time.time() + 3600  # 1 hour later
+        task_status[task_id]['delete_at'] = time.time() + 600  # 10 minutes later
 
 # Periodic cleanup function (could be run in a separate thread or scheduled task)
 def cleanup_tasks():
