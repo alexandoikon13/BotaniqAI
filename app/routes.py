@@ -40,7 +40,7 @@ def upload():
             task_token = secrets.token_urlsafe()  # Generate a secure token
             thread = threading.Thread(target=process_file_async, args=(file, task_id))
             thread.start()
-            task_status[task_id] = {"status": "Processing", "token": task_token}
+            task_status[task_id] = {"status": "Processing...", "token": task_token}
             return jsonify({"task_id": task_id, "token": task_token}), 202
         else:
             return 'File type not allowed', 400
@@ -52,12 +52,12 @@ def process_file_async(file, task_id):
     start_time = time.time()
     try:
         # Fetch Cloudcube URL from environment variables
-        cloudcube_url = urlparse(os.getenv('CLOUDCUBE_URL'))
+        cloudcube_url = urlparse(os.getenv('CLOUDCUBE_PUBLIC_URL'))
         output, description = process_image(file, cloudcube_url)
         task_status[task_id] = {"status": "Complete", "image": output, "description": description}
     except Exception as e:
         logging.error(f"Error processing file: {e}")
-        task_status[task_id] = {"status": "Error", "message": str(e)}
+        task_status[task_id] = {"status": "Error!", "message": str(e)}
     finally:
         # Mark the task for deletion after a certain time
         task_status[task_id]['delete_at'] = time.time() + 600  # 10 minutes later
@@ -73,10 +73,10 @@ def cleanup_tasks():
 @main.route('/status/<task_id>', methods=['GET'])
 def check_status(task_id):
     token = request.args.get('token')
-    status = task_status.get(task_id, {"status": "Not Found"})
+    status = task_status.get(task_id, {"status": "Not Found!"})
 
     # Check if the token matches
     if status.get("token") != token:
-        return jsonify({"status": "Unauthorized"}), 401
+        return jsonify({"status": "Unauthorized!"}), 401
 
     return jsonify(status)
