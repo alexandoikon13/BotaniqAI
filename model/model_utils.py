@@ -32,17 +32,27 @@ def run_inference_and_save(model, file_stream, cloudcube_url):
     local_results_path = os.path.join(results_dir, f"{str(uuid.uuid4())}.jpg")
     im.save(local_results_path)
 
-    # Upload the results to Cloudcube
+    # Prepare for upload to Cloudcube
     parsed_url = urlparse(os.environ.get('CLOUDCUBE_URL'))
     bucket_name = parsed_url.netloc.split('.')[0]
-    s3 = boto3.client(
-        's3',
-        aws_access_key_id=os.environ.get('CLOUDCUBE_ACCESS_KEY_ID'),
-        aws_secret_access_key=os.environ.get('CLOUDCUBE_SECRET_ACCESS_KEY')
-        )
-    object_name = f"{os.path.basename(local_results_path)}"
-    s3.upload_file(local_results_path, bucket_name, object_name)
 
-    # Return the URL of the saved image in Cloudcube
-    cloudcube_results_url = f"{parsed_url.path[1:]}/{object_name}"
+    with open(local_results_path, 'rb') as file_data:
+        s3_client = boto3.client(
+            's3',
+            aws_access_key_id=os.environ.get('CLOUDCUBE_ACCESS_KEY_ID'),
+            aws_secret_access_key=os.environ.get('CLOUDCUBE_SECRET_ACCESS_KEY')
+        )
+        try:
+            s3_client.put_object(
+                Bucket=bucket_name,
+                Key=f"{parsed_url.path[1:]}/results/{os.path.basename(local_results_path)}",
+                Body=file_data,
+                ContentType='image/jpeg'  # Adjust content type if necessary
+            )
+        except Exception as e:
+            print(f"Failed to upload to S3: {e}")
+            raise
+
+    # Construct and return Cloudcube URL
+    cloudcube_results_url = f"{cloudcube_url}{parsed_url.path[1:]}/results/{os.path.basename(local_results_path)}"
     return cloudcube_results_url
