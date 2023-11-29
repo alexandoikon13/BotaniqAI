@@ -52,7 +52,7 @@ def process_file_async(file, task_id):
     start_time = time.time()
     try:
         # Fetch Cloudcube URL from environment variables
-        cloudcube_url = urlparse(os.getenv('CLOUDCUBE_PUBLIC_URL'))
+        cloudcube_url = urlparse(os.getenv('CLOUDCUBE_URL'))
         output, description = process_image(file, cloudcube_url)
         task_status[task_id] = {"status": "Complete", "image": output, "description": description}
     except Exception as e:

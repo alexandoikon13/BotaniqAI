@@ -33,16 +33,16 @@ def run_inference_and_save(model, file_stream, cloudcube_url):
     im.save(local_results_path)
 
     # Upload the results to Cloudcube
-    parsed_url = urlparse(os.environ.get('CLOUDCUBE_PUBLIC_URL'))
+    parsed_url = urlparse(os.environ.get('CLOUDCUBE_URL'))
     bucket_name = parsed_url.netloc.split('.')[0]
     s3 = boto3.client(
         's3',
         aws_access_key_id=os.environ.get('CLOUDCUBE_ACCESS_KEY_ID'),
         aws_secret_access_key=os.environ.get('CLOUDCUBE_SECRET_ACCESS_KEY')
         )
-    object_name = f"results/{os.path.basename(local_results_path)}"
+    object_name = f"{os.path.basename(local_results_path)}"
     s3.upload_file(local_results_path, bucket_name, object_name)
 
     # Return the URL of the saved image in Cloudcube
-    cloudcube_results_url = f"{cloudcube_url}{object_name}"
+    cloudcube_results_url = f"{parsed_url.path[1:]}/{object_name}"
     return cloudcube_results_url
