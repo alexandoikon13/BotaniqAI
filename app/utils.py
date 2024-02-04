@@ -1,7 +1,5 @@
 from model.model_utils import load_yolov8_model, run_inference_and_save
-import openai
-from openai import OpenAI
-import os
+import requests
 
 # Load the model (consider doing this when starting the app)
 model = load_yolov8_model()
@@ -17,16 +15,13 @@ def process_image(file, cloudcube_url):
 
     return cloudcube_results_url, description
 
-def generate_description(image_data):
-    client = OpenAI(api_key=os.environ['OPENAI_API_KEY'],)
-
-    # Construct a prompt based on your requirements
-    prompt = f"Describe the following image: {image_data}"
-
-    response = client.completions.create(
-      model="davinci-002",
-      prompt=prompt,
-      max_tokens=100
-    )
-
-    return response.choices[0].text.strip()
+def generate_description(image_url):
+    try:
+        response = requests.post('http://localhost:5000/generate', json={'text': f"Describe this image: {image_url}"})
+        if response.status_code == 200:
+            data = response.json()
+            return data['generated_text']
+        else:
+            return "Error in generating description"
+    except Exception as e:
+        return f"An error occurred: {e}"
